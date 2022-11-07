@@ -1,6 +1,6 @@
 package com.kensai.splendor.engine.loaders
 
-import com.kensai.splendor.engine.model.Model.Noble
+import com.kensai.splendor.engine.model.Model._
 import org.scalatest.Inside.inside
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -17,5 +17,10 @@ class CsvLoadersSpec extends AnyFlatSpec with Matchers {
         costs.values.foreach(cost => cost should be >= 3)
       }
     }
+  }
+
+  "Card loader" should "retrieve all cards" in {
+    val cards = CsvLoaders.loadCards()
+    cards should have size 90
   }
 }
