@@ -1,6 +1,7 @@
 package com.kensai.splendor.engine.loaders
 
-import com.kensai.splendor.engine.model.Model._
+import com.kensai.splendor.model.protobuf.model.Gem._
+import com.kensai.splendor.model.protobuf.model._
 import os.Path
 
 object CsvLoaders {
@@ -18,7 +19,7 @@ object CsvLoaders {
           parseGem(split(3), Emerald),
           parseGem(split(4), Onyx),
           parseGem(split(5), Diamond)
-        ).flatten.toMap
+        ).flatten
         val victoryPoints = split(6).toInt
         Noble(
           name = split.head,
@@ -36,38 +37,65 @@ object CsvLoaders {
       .toSeq
       .tail // skip header
 
-  private def parseGem(value: String, gem: Gem): Option[(Gem, Int)] =
-    value.toIntOption.filterNot(_ == 0).map(value => (gem, value))
+  private def parseGem(value: String, gem: Gem): Option[GemCount] =
+    value.toIntOption.filterNot(_ == 0).map(value => GemCount(gem, value))
 
-  def loadCards(path: Path =
-                os.pwd / "engine" / "src" / "main" / "resources" / "cards.csv"): Seq[Card] = {
+  private def toGem(value: String): Gem = value match {
+    case "ruby"     => Ruby
+    case "sapphire" => Sapphire
+    case "emerald"  => Emerald
+    case "onyx"     => Onyx
+    case "diamond"  => Diamond
+    case "gold"     => Gold
+    case _          => throw new IllegalArgumentException(s"Invalid gem name [$value]")
+  }
+  private def toGem(c: Char): Gem = c match {
+    case 'r' => Ruby
+    case 's' => Sapphire
+    case 'e' => Emerald
+    case 'o' => Onyx
+    case 'd' => Diamond
+    case 'g' => Gold
+    case _   => throw new IllegalArgumentException(s"Invalid gem char [$c]")
+  }
+
+  def loadCards(
+      path: Path =
+        os.pwd / "engine" / "src" / "main" / "resources" / "cards.csv"
+  ): Seq[Card] = {
     readTailFile(path)
       .map { line =>
         try {
           val split = line.split(";")
           val tier = split.head.toInt
           val victoryPoints = split(1).toInt
-          val gem = Gem(split(2))
-          val costs = split(3).grouped(2).map { subValue => (Gem(subValue.tail.head) -> subValue.head.toString.toInt) }.toMap
+          val gem = toGem(split(2))
+          val costs = split(3)
+            .grouped(2)
+            .map { subValue =>
+              GemCount(toGem(subValue.tail.head), subValue.head.toString.toInt)
+            }.toSeq
           Card(
             tierList = tier,
             winningPoints = victoryPoints,
-            cost = costs,
+            costs = costs,
             valueType = gem
           )
         } catch {
-          case e: RuntimeException => throw new RuntimeException(s"Error when parsing line [$line]", e)
+          case e: RuntimeException =>
+            throw new RuntimeException(s"Error when parsing line [$line]", e)
         }
       }
   }
 
-  def loadCoins(path: Path =
-                os.pwd / "engine" / "src" / "main" / "resources" / "coins.csv"): Map[Gem, Int] = {
-    readTailFile(path)
-      .map { line =>
-        val split = line.split(";")
-        (Gem(split.head), split(1).toInt)
-      }.toMap
+  def loadCoins(
+      path: Path =
+        os.pwd / "engine" / "src" / "main" / "resources" / "coins.csv"
+  ): Map[Gem, Int] = {
+    readTailFile(path).map { line =>
+      val split = line.split(";")
+      (toGem(split.head), split(1).toInt)
+    }.toMap
   }
 
 }

@@ -1,13 +1,13 @@
 ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "com.kensai"
-ThisBuild / organizationName := "splendor"
+name := "splendor"
 
 resolvers += Resolver.mavenLocal
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 lazy val root = (project in file("."))
-  .aggregate(engine)
+  .aggregate(model, engine)
 
 val testVersion = "3.2.12"
 
@@ -24,3 +24,22 @@ val defaultSettings = Seq(libraryDependencies ++= {
 })
 lazy val engine = (project in file("engine"))
   .settings(defaultSettings)
+  .dependsOn(model)
+
+
+val protoSettings = Seq(libraryDependencies ++= {
+  Seq(
+    "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf",
+    "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion
+  )
+},
+  Compile / PB.targets := Seq(
+    scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
+  )
+)
+lazy val model = (project in file("model"))
+  .settings(defaultSettings, protoSettings)
+
+//Compile / PB.targets := Seq(
+//  scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
+//)

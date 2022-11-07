@@ -1,0 +1,55 @@
+syntax = 'proto3';
+
+package com.kensai.splendor.model.protobuf;
+
+enum Gem {
+  Gold = 0;
+  Ruby = 1;
+  Sapphire = 2;
+  Emerald = 3;
+  Onyx = 4;
+  Diamond = 5;
+}
+
+message GemCount {
+  Gem gem = 1;
+  int32 count = 2;
+}
+
+message Noble {
+  string name = 1;
+  repeated GemCount costs = 2;
+  int32 winningPoints = 3;
+}
+
+message Card {
+  int32 tierList = 1;
+  int32 winningPoints = 2;
+  repeated GemCount costs = 3;
+  Gem valueType = 4;
+}
+
+message Player {
+  string id = 1;
+  string name = 2;
+  int32 playerNumber = 3;
+  int32 score = 4;
+  repeated Noble nobles = 5;
+  repeated Card cards = 6;
+  repeated Card reservedCards = 7;
+  repeated GemCount coins = 8;
+}
+
+message Board {
+  int64 gameId = 1;
+  int32 playersToPlay = 2;
+  repeated GemCount availableCoins = 3;
+  repeated Card displayedCards1 = 4;
+  repeated Card availableCards1 = 5;
+  repeated Card displayedCards2 = 6;
+  repeated Card availableCards2 = 7;
+  repeated Card displayedCards3 = 8;
+  repeated Card availableCards3 = 9;
+  repeated Noble availableNobles = 10;
+  repeated Player players = 11;
+}
