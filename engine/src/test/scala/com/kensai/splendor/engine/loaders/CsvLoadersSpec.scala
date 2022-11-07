@@ -23,4 +23,10 @@ class CsvLoadersSpec extends AnyFlatSpec with Matchers {
     val cards = CsvLoaders.loadCards()
     cards should have size 90
   }
+
+  "Coins loader" should "retrieve all coins" in {
+    val coins = CsvLoaders.loadCoins()
+    coins should have size 6
+    coins should contain (Gold -> 5)
+  }
 }

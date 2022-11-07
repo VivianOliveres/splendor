@@ -61,4 +61,13 @@ object CsvLoaders {
       }
   }
 
+  def loadCoins(path: Path =
+                os.pwd / "engine" / "src" / "main" / "resources" / "coins.csv"): Map[Gem, Int] = {
+    readTailFile(path)
+      .map { line =>
+        val split = line.split(";")
+        (Gem(split.head), split(1).toInt)
+      }.toMap
+  }
+
 }

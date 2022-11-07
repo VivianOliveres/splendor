@@ -10,6 +10,7 @@ object Model {
       case "emerald" => Emerald
       case "onyx" => Onyx
       case "diamond" => Diamond
+      case "gold" => Gold
       case _ => throw new IllegalArgumentException(s"Invalid gem name [$value]")
     }
     def apply(c: Char): Gem = c match {
@@ -18,6 +19,7 @@ object Model {
       case 'e' => Emerald
       case 'o' => Onyx
       case 'd' => Diamond
+      case 'g' => Gold
       case _ => throw new IllegalArgumentException(s"Invalid gem char [$c]")
     }
   }
@@ -26,6 +28,7 @@ object Model {
   case object Emerald extends Gem
   case object Onyx extends Gem
   case object Diamond extends Gem
+  case object Gold extends Gem
 
   case class Noble(name: String, cost: Map[Gem, Int], winningPoints: Int)
 
