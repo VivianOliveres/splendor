@@ -71,6 +71,9 @@ hs_err_pid*
 *.iml
 *.ipr
 
+# SBT and IntelliJ
+/.bsp/
+
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
 
