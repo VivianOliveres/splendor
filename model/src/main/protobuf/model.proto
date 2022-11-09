@@ -2,6 +2,10 @@ syntax = 'proto3';
 
 package com.kensai.splendor.model.protobuf;
 
+///////////
+// Model //
+///////////
+
 enum Gem {
   Gold = 0;
   Ruby = 1;
@@ -33,7 +37,6 @@ message Player {
   string id = 1;
   string name = 2;
   int32 playerNumber = 3;
-  int32 score = 4;
   repeated Noble nobles = 5;
   repeated Card cards = 6;
   repeated Card reservedCards = 7;
@@ -42,14 +45,72 @@ message Player {
 
 message Board {
   int64 gameId = 1;
-  int32 playersToPlay = 2;
-  repeated GemCount availableCoins = 3;
-  repeated Card displayedCards1 = 4;
-  repeated Card availableCards1 = 5;
-  repeated Card displayedCards2 = 6;
-  repeated Card availableCards2 = 7;
-  repeated Card displayedCards3 = 8;
-  repeated Card availableCards3 = 9;
-  repeated Noble availableNobles = 10;
-  repeated Player players = 11;
+  int32 turnNumber = 2;
+  int32 playersToPlay = 3;
+  repeated GemCount coins = 4;
+  repeated Card displayedCards1 = 5;
+  repeated Card hiddenCards1 = 6;
+  repeated Card displayedCards2 = 7;
+  repeated Card hiddenCards2 = 8;
+  repeated Card displayedCards3 = 9;
+  repeated Card hiddenCards3 = 10;
+  repeated Noble nobles = 11;
+  repeated Player players = 12;
+}
+
+//////////////
+// Requests //
+//////////////
+
+message DoNothing {
+}
+
+message Take3Gems {
+  Gem gem1 = 2;
+  optional Gem gem2 = 3;
+  optional Gem gem3 = 4;
+}
+
+message Take2Gems {
+  Gem gem = 2;
+}
+
+message ReserveCard {
+  Card card = 2;
+}
+
+message BuyCard {
+  Card card = 2;
+}
+
+message PlayerAction {
+  int32 playerNumber = 1;
+  DoNothing doNothing = 2;
+  Take3Gems take3Gems = 3;
+  Take2Gems Take2Gems = 4;
+  ReserveCard reserveCard = 5;
+  BuyCard buyCard = 6;
+}
+
+message InvalidAction {
+  int32 playerNumber = 1;
+  string message = 2;
+}
+
+///////////////
+// Responses //
+///////////////
+
+message GameResponse {
+  NewTurn newTurn = 1;
+  PlayerWon playerWon = 2;
+}
+
+message NewTurn {
+  Board board = 1;
+}
+
+message PlayerWon {
+  repeated int32 winners = 1;
+  Board finalBoard = 2;
 }

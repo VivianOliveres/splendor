@@ -1,4 +1,4 @@
-ThisBuild / scalaVersion := "2.13.8"
+ThisBuild / scalaVersion := "2.13.10"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "com.kensai"
 name := "splendor"
@@ -39,7 +39,3 @@ val protoSettings = Seq(libraryDependencies ++= {
 )
 lazy val model = (project in file("model"))
   .settings(defaultSettings, protoSettings)
-
-//Compile / PB.targets := Seq(
-//  scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
-//)
