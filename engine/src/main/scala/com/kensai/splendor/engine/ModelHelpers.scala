@@ -31,6 +31,11 @@ object ModelHelpers {
       )
     }
 
+    def containCard(card: Card): Boolean =
+      board.displayedCards1.contains(card) ||
+      board.displayedCards2.contains(card) ||
+      board.displayedCards3.contains(card)
+
     def contains(gems: Seq[Gem]): Boolean =
       contains(gems.map((_, 1)).toMap)
 
@@ -94,7 +99,7 @@ object ModelHelpers {
 
     def add(toAdd: Map[Gem, Int]): Seq[GemCount] = {
       val result = gemCounts.toEnumMap |+| toAdd
-      val filteredResults = result.filterNot(_._2 <= 0)
+      val filteredResults = result.filterNot(_._2 == 0)
       toGemCounts(filteredResults)
     }
 
@@ -124,7 +129,7 @@ object ModelHelpers {
       player.copy(coins = player.coins.remove(gems))
 
     def addCard(card: Card): Player =
-      player.copy(cards = player.cards :+ card)
+      player.addCards(card)
   }
 
 }

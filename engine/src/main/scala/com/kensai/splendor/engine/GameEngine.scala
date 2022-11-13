@@ -22,28 +22,34 @@ object GameEngine {
 
       maybeNewBoard
         .map(_.incTurn)
-        .map{newBoard =>
+        .map{ newBoard =>
         val winners = newBoard.computeWinners
         if (winners.isEmpty)
-          GameResponse(None, Some(PlayerWon(winners, Some(newBoard))))
+          GameResponse(newTurn = Some(NewTurn(newBoard)))
         else
-          GameResponse(Some(NewTurn(Some(newBoard))), None)
+          GameResponse(playerWon = Some(PlayerWon(winners, newBoard)))
       }
     }
   }
 
   private def doExecute(board: Board, action: BuyCard): Either[InvalidAction, Board] = {
-    val gemsToRemove = action.getCard.costs.map(gc => gc.gem -> gc.count).toMap
+    val gemsToRemove = action.card.costs.toEnumMap
     val newPlayer = board.currentPlayer
       .removeCoins(gemsToRemove)
-      .addCard(action.getCard)
+      .addCard(action.card)
 
-    val maybeBoard = if (newPlayer.coins.exists(_.count < 0))
+    if (newPlayer.coins.exists(_.count < 0))
       Left(InvalidAction(board.playersToPlay, s"Player can not afford to buy this card"))
-    else
-      Right(board.addCoins(gemsToRemove.view.mapValues(-_).toMap))
-
-    maybeBoard.flatMap(_.removeDisplayedCard(action.getCard))
+    else if (newPlayer.reservedCards.contains(action.card)) {
+      val updatedPlayer = newPlayer.copy(reservedCards = newPlayer.reservedCards.filterNot(_ == action.card))
+      Right(board.addCoins(gemsToRemove).update(board.currentPlayer, updatedPlayer))
+    } else if (board.containCard(action.card)) {
+      board.addCoins(gemsToRemove)
+        .update(board.currentPlayer, newPlayer)
+        .removeDisplayedCard(action.card)
+    } else {
+      Left(InvalidAction(board.playersToPlay, s"Card does not exist ${action.card}"))
+    }
   }
 
   private def doExecute(board: Board, action: Take2Gems): Either[InvalidAction, Board] = {
@@ -70,13 +76,16 @@ object GameEngine {
     // Check predicates
     val maybeBoard = checkTake3GemsPredicates(board, action)
 
-    // remove them to board
+    // Gems to remove
     val gems = Seq(action.gem1) ++ action.gem2 ++ action.gem3
-    maybeBoard.map(_.removeCoins(gems))
 
     // Inc gems for player
     val newPlayer = board.currentPlayer.addCoins(gems)
-    maybeBoard.map(b => b.update(b.currentPlayer, newPlayer))
+
+    // Update board
+    maybeBoard
+      .map(_.removeCoins(gems))
+      .map(b => b.update(b.currentPlayer, newPlayer))
   }
 
   private def checkTake3GemsPredicates(board: Board, action: Take3Gems): Either[InvalidAction, Board] = {
@@ -99,21 +108,15 @@ object GameEngine {
     else {
       // if gold in bank and player has less than 10 coins => get a gold coin
       val (newPlayerCoins, newBoardCoins) = if (player.coins.map(_.count).sum < 10 && board.coins.find(_.gem == Gold).map(_.count).getOrElse(0) > 0){
-        val newPlayerCoins = player.coins.map {
-          case GemCount(Gold, count, _) => GemCount(Gold, count + 1)
-          case gc => gc
-        }
-        val newBoardCoins = board.coins.map {
-          case GemCount(Gold, count, _) => GemCount(Gold, count - 1)
-          case gc => gc
-        }
+        val newPlayerCoins = player.coins.add(Map(Gold -> 1))
+        val newBoardCoins = board.coins.remove(Map(Gold -> 1))
         (newPlayerCoins, newBoardCoins)
       } else
         (player.coins, board.coins) // Unchanged
 
       // remove card from board and put it into reserved cards of player
-      val reservedCard = action.getCard
-      val newPlayer = player.addCard(reservedCard).copy(coins = newPlayerCoins)
+      val reservedCard = action.card
+      val newPlayer = player.addReservedCards(reservedCard).copy(coins = newPlayerCoins)
 
       // return updated board
       board

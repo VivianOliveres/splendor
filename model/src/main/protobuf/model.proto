@@ -1,5 +1,5 @@
 syntax = 'proto3';
-
+import "scalapb/scalapb.proto";
 package com.kensai.splendor.model.protobuf;
 
 ///////////
@@ -66,21 +66,21 @@ message DoNothing {
 }
 
 message Take3Gems {
-  Gem gem1 = 2;
+  Gem gem1 = 2 [(scalapb.field).no_box = true];
   optional Gem gem2 = 3;
   optional Gem gem3 = 4;
 }
 
 message Take2Gems {
-  Gem gem = 2;
+  Gem gem = 2 [(scalapb.field).no_box = true];
 }
 
 message ReserveCard {
-  Card card = 2;
+  Card card = 2 [(scalapb.field).no_box = true];
 }
 
 message BuyCard {
-  Card card = 2;
+  Card card = 2 [(scalapb.field).no_box = true];
 }
 
 message PlayerAction {
@@ -107,10 +107,10 @@ message GameResponse {
 }
 
 message NewTurn {
-  Board board = 1;
+  Board board = 1 [(scalapb.field).no_box = true];
 }
 
 message PlayerWon {
   repeated int32 winners = 1;
-  Board finalBoard = 2;
+  Board finalBoard = 2 [(scalapb.field).no_box = true];
 }

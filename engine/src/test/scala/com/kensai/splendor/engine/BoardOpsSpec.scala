@@ -10,7 +10,7 @@ import org.scalatest.funspec.AnyFunSpec
 
 class BoardOpsSpec extends AnyFunSpec with Matchers {
 
-  val defaultBoard = BoardInit.board(Seq(Geralt, Ciri, Yennefer, Triss))
+  private val defaultBoard = BoardInit.board(Seq(Geralt, Ciri, Yennefer, Triss))
 
   describe("computeWinners") {
     it("should computeWinners returns nothing when there is a winner but turn is not finished") {
@@ -181,7 +181,7 @@ class BoardOpsSpec extends AnyFunSpec with Matchers {
       val result = defaultBoard.removeDisplayedCard(cardToRemove)
 
       result.toOption.get.displayedCards1 should have size 4
-      result.toOption.get.hiddenCards1 should not contain (cardToRemove)
+      result.toOption.get.hiddenCards1 should not contain cardToRemove
     }
 
     it("should update tier2 cards") {
@@ -190,7 +190,7 @@ class BoardOpsSpec extends AnyFunSpec with Matchers {
       val result = defaultBoard.removeDisplayedCard(cardToRemove)
 
       result.toOption.get.displayedCards2 should have size 4
-      result.toOption.get.hiddenCards2 should not contain (cardToRemove)
+      result.toOption.get.hiddenCards2 should not contain cardToRemove
     }
 
     it("should update tier3 cards") {
@@ -199,7 +199,7 @@ class BoardOpsSpec extends AnyFunSpec with Matchers {
       val result = defaultBoard.removeDisplayedCard(cardToRemove)
 
       result.toOption.get.displayedCards3 should have size 4
-      result.toOption.get.hiddenCards3 should not contain (cardToRemove)
+      result.toOption.get.hiddenCards3 should not contain cardToRemove
     }
 
     it("should update even when there are no more cards to pickup") {
