@@ -1,10 +1,9 @@
 package com.kensai.splendor.model
 
 import com.kensai.splendor.model.protobuf.model.{Board, Player}
-import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
-trait ModelAsserts extends AnyFunSpec with Matchers {
+trait ModelAsserts extends Matchers {
 
   implicit class BoardAssert(board: Board) {
     def shouldBeEq(otherBoard: Board): Board = {

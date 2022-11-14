@@ -22,10 +22,6 @@ val defaultSettings = Seq(libraryDependencies ++= {
     "com.lihaoyi" %% "os-lib" % "0.8.1"
   )
 })
-lazy val engine = (project in file("engine"))
-  .settings(defaultSettings)
-  .dependsOn(model)
-
 
 val protoSettings = Seq(libraryDependencies ++= {
   Seq(
@@ -39,3 +35,8 @@ val protoSettings = Seq(libraryDependencies ++= {
 )
 lazy val model = (project in file("model"))
   .settings(defaultSettings, protoSettings)
+
+lazy val engine = (project in file("engine"))
+  .settings(defaultSettings)
+  .dependsOn(model % "test->test;compile->compile")
+

@@ -1,13 +1,14 @@
 package com.kensai.splendor.engine
 
-import com.kensai.splendor.model._
-import com.kensai.splendor.model.ModelHelpers._
-import com.kensai.splendor.model.DataSamples._
+import _root_.com.kensai.splendor.model._
+import _root_.com.kensai.splendor.model.ModelHelpers._
+import _root_.com.kensai.splendor.model.DataSamples._
 import com.kensai.splendor.model.protobuf.model.Gem._
 import com.kensai.splendor.model.protobuf.model._
 import org.scalatest.Inside.inside
+import org.scalatest.funspec.AnyFunSpec
 
-class GameEngineSpec extends ModelAsserts {
+class GameEngineSpec extends AnyFunSpec with ModelAsserts {
 
   private def createActions(playerNumber: Int, card: Card): Seq[PlayerAction] =
     Seq(
