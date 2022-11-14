@@ -1,6 +1,6 @@
 package com.kensai.splendor.engine
 
-import com.kensai.splendor.engine.PlayerSamples._
+import com.kensai.splendor.model.DataSamples._
 import org.scalatest.matchers.should.Matchers
 import com.kensai.splendor.model.protobuf.model._
 import com.kensai.splendor.model.protobuf.model.Gem._

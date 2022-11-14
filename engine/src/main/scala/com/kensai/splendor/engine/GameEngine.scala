@@ -2,7 +2,7 @@ package com.kensai.splendor.engine
 
 import com.kensai.splendor.model.protobuf.model.Gem.Gold
 import com.kensai.splendor.model.protobuf.model._
-import com.kensai.splendor.engine.ModelHelpers._
+import com.kensai.splendor.model.ModelHelpers._
 
 object GameEngine {
 

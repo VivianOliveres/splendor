@@ -1,4 +1,4 @@
-package com.kensai.splendor.engine
+package com.kensai.splendor.model
 
 import com.kensai.splendor.model.protobuf.model._
 import cats.implicits._
@@ -13,11 +13,13 @@ object ModelHelpers {
         Seq()
       else {
         val winnersByScore = board.players
-          .groupBy(_.cards.map(_.winningPoints).sum).filter(_._1 >= 15)
+          .groupBy(_.cards.map(_.winningPoints).sum)
+          .filter(_._1 >= 15)
           .maxByOption(_._1)
           .map(_._2)
           .getOrElse(Seq())
-        winnersByScore.groupBy(_.cards.size)
+        winnersByScore
+          .groupBy(_.cards.size)
           .minByOption(_._1)
           .map(_._2.map(_.playerNumber))
           .getOrElse(Seq())
@@ -33,8 +35,8 @@ object ModelHelpers {
 
     def containCard(card: Card): Boolean =
       board.displayedCards1.contains(card) ||
-      board.displayedCards2.contains(card) ||
-      board.displayedCards3.contains(card)
+        board.displayedCards2.contains(card) ||
+        board.displayedCards3.contains(card)
 
     def contains(gems: Seq[Gem]): Boolean =
       contains(gems.map((_, 1)).toMap)
@@ -67,21 +69,36 @@ object ModelHelpers {
       card.tierList match {
         case 1 =>
           removeAndAddCard(card, board.hiddenCards1, board.displayedCards1)
-            .map{case (avCards, displCards) => board.copy(hiddenCards1 = avCards, displayedCards1 = displCards)}
+            .map { case (avCards, displCards) =>
+              board.copy(hiddenCards1 = avCards, displayedCards1 = displCards)
+            }
         case 2 =>
           removeAndAddCard(card, board.hiddenCards2, board.displayedCards2)
-            .map{case (avCards, displCards) => board.copy(hiddenCards2 = avCards, displayedCards2 = displCards)}
+            .map { case (avCards, displCards) =>
+              board.copy(hiddenCards2 = avCards, displayedCards2 = displCards)
+            }
         case 3 =>
           removeAndAddCard(card, board.hiddenCards3, board.displayedCards3)
-            .map{case (avCards, displCards) => board.copy(hiddenCards3 = avCards, displayedCards3 = displCards)}
+            .map { case (avCards, displCards) =>
+              board.copy(hiddenCards3 = avCards, displayedCards3 = displCards)
+            }
         case _ =>
           Left(InvalidAction(board.playersToPlay, s"Invalid card: $card"))
       }
     }
 
-    private def removeAndAddCard(cardToRemove: Card, hiddenCards: Seq[Card], displayedCards: Seq[Card]): Either[InvalidAction, (Seq[Card], Seq[Card])] = {
+    private def removeAndAddCard(
+        cardToRemove: Card,
+        hiddenCards: Seq[Card],
+        displayedCards: Seq[Card]
+    ): Either[InvalidAction, (Seq[Card], Seq[Card])] = {
       if (!displayedCards.contains(cardToRemove))
-        Left(InvalidAction(board.playersToPlay, s"Card does not exist [$cardToRemove]"))
+        Left(
+          InvalidAction(
+            board.playersToPlay,
+            s"Card does not exist [$cardToRemove]"
+          )
+        )
       else if (hiddenCards.isEmpty) {
         val newDisplayedCards = displayedCards.filterNot(_ == cardToRemove)
         Right((hiddenCards, newDisplayedCards))
@@ -89,7 +106,8 @@ object ModelHelpers {
         val index = Random.nextInt(hiddenCards.size)
         val newCard = hiddenCards(index)
         val newHiddenCards = hiddenCards.filterNot(_ == newCard)
-        val newDisplayedCards = displayedCards.filterNot(_ == cardToRemove) :+ newCard
+        val newDisplayedCards =
+          displayedCards.filterNot(_ == cardToRemove) :+ newCard
         Right((newHiddenCards, newDisplayedCards))
       }
     }
@@ -114,7 +132,7 @@ object ModelHelpers {
       gemCounts
         .map(gc => (gc.gem, gc.count))
         .groupBy(identity)
-        .map{case (gc, values) => gc._1 -> values.map(_._2).sum}
+        .map { case (gc, values) => gc._1 -> values.map(_._2).sum }
   }
 
   implicit class PlayerOps(player: Player) {
