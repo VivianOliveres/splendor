@@ -1,7 +1,14 @@
-package com.kensai.splendor.engine.loaders
+package com.kensai.splendor.engine
 
-import com.kensai.splendor.model.protobuf.model.Gem._
-import com.kensai.splendor.model.protobuf.model._
+import com.kensai.splendor.model.protobuf.model.Gem.{
+  Diamond,
+  Emerald,
+  Gold,
+  Onyx,
+  Ruby,
+  Sapphire
+}
+import com.kensai.splendor.model.protobuf.model.{Card, Gem, GemCount, Noble}
 import os.Path
 
 object CsvLoaders {
@@ -74,7 +81,8 @@ object CsvLoaders {
             .grouped(2)
             .map { subValue =>
               GemCount(toGem(subValue.tail.head), subValue.head.toString.toInt)
-            }.toSeq
+            }
+            .toSeq
           Card(
             tierList = tier,
             winningPoints = victoryPoints,

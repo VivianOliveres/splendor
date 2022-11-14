@@ -1,8 +1,7 @@
-package com.kensai.splendor.engine.loaders
+package com.kensai.splendor.engine
 
 import com.kensai.splendor.model.protobuf.model.Gem._
 import com.kensai.splendor.model.protobuf.model._
-
 import org.scalatest.Inside.inside
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

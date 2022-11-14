@@ -1,6 +1,5 @@
 package com.kensai.splendor.engine
 
-import com.kensai.splendor.engine.loaders.CsvLoaders
 import com.kensai.splendor.model.protobuf.model._
 
 import scala.annotation.tailrec
