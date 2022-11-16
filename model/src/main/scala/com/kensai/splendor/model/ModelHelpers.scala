@@ -113,20 +113,25 @@ object ModelHelpers {
     }
   }
 
+  implicit class MapGemCountsOps(map: Map[Gem, Int]) {
+    def toGemCounts: Seq[GemCount] =
+      map.map(i => GemCount(i._1, i._2)).toSeq
+  }
+
   implicit class GemCounts(gemCounts: Seq[GemCount]) {
 
     def add(toAdd: Map[Gem, Int]): Seq[GemCount] = {
       val result = gemCounts.toEnumMap |+| toAdd
-      val filteredResults = result.filterNot(_._2 == 0)
-      toGemCounts(filteredResults)
+      result
+        .filterNot(_._2 == 0)
+        .toGemCounts
     }
 
-    def remove(toAdd: Map[Gem, Int]): Seq[GemCount] = {
+    def remove(toAdd: Map[Gem, Int]): Seq[GemCount] =
       add(toAdd.view.mapValues(-_).toMap)
-    }
 
-    private def toGemCounts(values: Map[Gem, Int]): Seq[GemCount] =
-      values.map(i => GemCount(i._1, i._2)).toSeq
+    def containsAll(other: Seq[GemCount]): Boolean =
+      remove(other.toEnumMap).forall(_.count >= 0)
 
     def toEnumMap: Map[Gem, Int] =
       gemCounts

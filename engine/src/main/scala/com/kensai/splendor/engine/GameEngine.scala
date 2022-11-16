@@ -38,6 +38,9 @@ object GameEngine {
       .removeCoins(gemsToRemove)
       .addCard(action.card)
 
+    // TODO: use bought cards from the player in the count (and not only coins)
+    // TODO: implement gold mechanic
+
     if (newPlayer.coins.exists(_.count < 0))
       Left(InvalidAction(board.playersToPlay, s"Player can not afford to buy this card"))
     else if (newPlayer.reservedCards.contains(action.card)) {
