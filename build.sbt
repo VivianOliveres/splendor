@@ -7,7 +7,7 @@ resolvers += Resolver.mavenLocal
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 lazy val root = (project in file("."))
-  .aggregate(model, engine)
+  .aggregate(model, engine, bots)
 
 val testVersion = "3.2.12"
 
@@ -40,3 +40,6 @@ lazy val engine = (project in file("engine"))
   .settings(defaultSettings)
   .dependsOn(model % "test->test;compile->compile")
 
+lazy val bots = (project in file("bots"))
+  .settings(defaultSettings)
+  .dependsOn(model)
